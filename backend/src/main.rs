@@ -100,21 +100,10 @@ async fn access_token(
     State(state): State<AppState>,
     Json(payload): Json<AuthorizationRequest>,
 ) -> Result<impl IntoResponse, StatusCode> {
-    if payload.code.is_none() && payload.refresh_token.is_none() {
-        return Err(StatusCode::BAD_REQUEST);
-    }
-
-    let client_id = env::var("ALIYUNDRIVE_CLIENT_ID").unwrap_or_default();
-    let client_secret = env::var("ALIYUNDRIVE_CLIENT_SECRET").unwrap_or_default();
-
     let client = &state.client;
     match client
-        .post("https://openapi.aliyundrive.com/oauth/access_token")
+        .post("https://i-tools.btxlittle.workers.dev/api/oauth/alipan/token")
         .json(&serde_json::json!({
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": payload.grant_type,
-            "code": payload.code,
             "refresh_token": payload.refresh_token,
         }))
         .send()
